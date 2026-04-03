@@ -9,9 +9,9 @@ pipeline {
         ECR_URL = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
     }
     stages {
-        stage('code') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/sravani110/Project.git'
+                checkout scm
             }
         }
         stage('build') {
