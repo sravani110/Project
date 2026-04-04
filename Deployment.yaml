@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-company-deployment
+  labels:
+    app: devops-company
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-company
+  template:
+    metadata:
+      labels:
+        app: devops-company
+    spec:
+      containers:
+      - name: devops-company
+        image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/img-repo:latest
+        ports:
+        - containerPort: 3000
