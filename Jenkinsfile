@@ -41,8 +41,8 @@ pipeline {
             steps {
                 sh '''
                 aws eks --region us-east-1 update-kubeconfig --name my-eks-cluster
-                kubectl apply -f Deployment.yaml
-                kubectl service -f service.yaml
+                kubectl apply -f Deployment.yaml --validate=false
+                kubectl service -f service.yaml --validate=false
                 '''
             }
         }
