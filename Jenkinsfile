@@ -37,6 +37,13 @@ pipeline {
                 '''
             }
         }
+        stage('Update Manifest') {
+            steps {
+                sh '''
+                sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" Deployment.yaml
+                '''
+            }
+        }
         stage('Deploying app') {
             steps {
                 sh '''
