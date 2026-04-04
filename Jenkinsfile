@@ -37,5 +37,14 @@ pipeline {
                 '''
             }
         }
+        stage('Deploying app') {
+            steps {
+                sh '''
+                aws eks --region us-east-1 update-kubeconfig --name my-eks-cluster
+                kubectl apply -f Deployment.yaml
+                kubectl service -f service.yaml
+                '''
+            }
+        }
     }
 }
