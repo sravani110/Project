@@ -4,7 +4,7 @@ pipeline {
         AWS_REGION = "${AWS_REGION}"
         ACCOUNT_ID = "${AWS_ACCOUNT_ID}"
         REPO_NAME = "${ECR_REPO_NAME}"
-        IMAGE_TAG = "latest"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
 
         ECR_URL = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
     }
