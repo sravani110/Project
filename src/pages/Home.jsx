@@ -27,7 +27,7 @@ export default function Home() {
         <div className="home-page">
             <Hero
                 subtitle="Learn DevOps"
-                title="Maste Modern DevOps Engineering"
+                title="Mast Modern DevOps Engineering"
                 description="Transform your career with comprehensive DevOps and Cloud training. Learn from industry experts through hands-on tutorials, courses, and real-world projects."
                 primaryCTA={{ text: 'Explore Courses', link: '/udemy' }}
                 secondaryCTA={{ text: 'Watch Tutorials', link: '/youtube' }}
