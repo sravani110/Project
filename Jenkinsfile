@@ -22,14 +22,14 @@ pipeline {
                 '''
             }
         }
-        /*stage('Login to ECR') {
+        stage('Login to ECR') {
             steps {
                 sh '''
                 aws ecr get-login-password --region $AWS_REGION | \
                 docker login --username AWS --password-stdin $ECR_URL
                 '''
             }
-        }*/
+        }
         stage('Push to ECR') {
             steps {
                 sh '''
