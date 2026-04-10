@@ -32,12 +32,14 @@ pipeline {
         stage('sonarqube analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE}") {
+                    withCredentials([string(credentialsId:'sonar-cred', variable:'SONAR_TOKEN')]) {
                           sh '''
                 npx sonar-scanner \
                 -Dsonar.projectKey=devops-company \
                 -Dsonar.sources=src \
                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
                 '''
+                }
                 }
             }
         }
