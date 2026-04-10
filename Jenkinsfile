@@ -21,6 +21,7 @@ pipeline {
         stage('install dependencies') {
             steps {
                 sh 'npm install'
+                sh 'npm install --save-dev jsdom'
             }
         }
         stage('run tests with coverage') {
