@@ -34,6 +34,8 @@ pipeline {
                 withSonarQubeEnv("${SONARQUBE}") {
                     withCredentials([string(credentialsId:'sonar-cred', variable:'SONAR_TOKEN')]) {
                           sh '''
+                          export PATH=\$PATH:/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/node16/bin
+                          node -v
                 npx sonar-scanner \
                 -Dsonar.projectKey=devops-company \
                 -Dsonar.sources=src \
