@@ -10,7 +10,7 @@ pipeline {
         IMAGE_TAG = "${env.BUILD_NUMBER}"
 
         ECR_URL = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        SONARQUBE = "sonarqube"
+        SONARQUBE = "Sonarqube"
     }
     stages {
         stage('Checkout') {
