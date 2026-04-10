@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "npx vitest run --coverage"
   },
   "dependencies": {
     "lucide-react": "^0.555.0",
