@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        nodejs 'node16'
+    }
     environment {
         AWS_REGION = "${AWS_REGION}"
         ACCOUNT_ID = "${AWS_ACCOUNT_ID}"
@@ -7,11 +10,42 @@ pipeline {
         IMAGE_TAG = "${env.BUILD_NUMBER}"
 
         ECR_URL = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        SONARQUBE = "sonarqube"
     }
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+        stage('install dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('run tests with coverage') {
+            steps {
+                sh 'npm run coverage'
+            }
+        } 
+        stage('sonarqube analysis') {
+            steps {
+                withSonarQubeEnv("${SONARQUBE}") {
+                          sh '''
+                npx sonar-scanner \
+                -Dsonar.projectKey=devops-company \
+                -Dsonar.sources=src \
+                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                '''
+                }
+            }
+        }
+ 
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+                }
             }
         }
         stage('build') {
