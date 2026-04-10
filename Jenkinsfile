@@ -37,7 +37,7 @@ pipeline {
                 npx sonar-scanner \
                 -Dsonar.projectKey=devops-company \
                 -Dsonar.sources=src \
-                -Dsonar.exclusions=**/* .test.jsx \
+                -Dsonar.exclusions="**/*.test.jsx" \
                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
                 -Dsonar.token=$SONAR_TOKEN
                 '''
