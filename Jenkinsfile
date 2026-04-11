@@ -20,8 +20,11 @@ pipeline {
         }
         stage('install dependencies') {
             steps {
-                sh 'npm install'
-                sh 'npm install --save-dev jsdom'
+                sh '''
+                node -v
+                npm install
+                npm install --save-dev jsdom
+                '''
             }
         }
         stage('run tests with coverage') {
@@ -34,7 +37,6 @@ pipeline {
                 withSonarQubeEnv("${SONARQUBE}") {
                     withCredentials([string(credentialsId:'sonar-cred', variable:'SONAR_TOKEN')]) {
                           sh '''
-                          export PATH=\$PATH:/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/node16/bin
                           node -v
                 npx sonar-scanner \
                 -Dsonar.token=$SONAR_TOKEN
