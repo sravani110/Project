@@ -10,7 +10,7 @@ pipeline {
         IMAGE_TAG = "${env.BUILD_NUMBER}"
 
         ECR_URL = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        SONARQUBE = "Sonarqube"
+        SONARQUBE = "sonarqube"
     }
     stages {
         stage('Checkout') {
@@ -37,11 +37,6 @@ pipeline {
                           export PATH=\$PATH:/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/node16/bin
                           node -v
                 npx sonar-scanner \
-                -Dsonar.projectKey=devops-company \
-                -Dsonar.sources=src \
-                -Dsonar.tests=src \
-                -Dsonar.test.inclusions="**/*.test.jsx" \
-                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
                 -Dsonar.token=$SONAR_TOKEN
                 '''
                 }
@@ -58,10 +53,7 @@ pipeline {
         }
         stage('build') {
             steps {
-                sh '''
-                 
-                docker build -t $ECR_URL/$REPO_NAME:$IMAGE_TAG .
-                '''
+                sh 'docker build -t $ECR_URL/$REPO_NAME:$IMAGE_TAG .'
             }
         }
         stage('Login to ECR') {
@@ -74,16 +66,12 @@ pipeline {
         }
         stage('Push to ECR') {
             steps {
-                sh '''
-                docker push $ECR_URL/$REPO_NAME:$IMAGE_TAG
-                '''
+                sh 'docker push $ECR_URL/$REPO_NAME:$IMAGE_TAG'
             }
         }
         stage('Update Manifest') {
             steps {
-                sh '''
-                sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" Deployment.yaml
-                '''
+                sh 'sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" Deployment.yaml'
             }
         }
         stage('Deploying app') {
