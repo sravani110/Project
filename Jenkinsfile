@@ -52,7 +52,7 @@ pipeline {
                             sh '''
                                 node -v
                                 npx sonar-scanner \
-                                  -Dsonar.token=$SONAR_TOKEN
+                                -Dsonar.token=$SONAR_TOKEN
                             '''
                         }
                     }
@@ -62,7 +62,7 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 2, unit: 'MINUTES') {
+                timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
