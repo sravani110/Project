@@ -95,8 +95,7 @@ pipeline {
         stage('Update Manifest') {
             steps {
                 sh '''
-                    cp Deployment.yaml Deployment_patched.yaml
-                    sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" Deployment_patched.yaml
+                    sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" Deployment.yaml
                 '''
             }
         }
@@ -106,9 +105,9 @@ pipeline {
                 sh '''
                     aws eks update-kubeconfig \
                         --region $AWS_REGION \
-                        --name $CLUSTER_NAME
+                        --name my-eks-cluster
 
-                    kubectl apply -f Deployment_patched.yaml
+                    kubectl apply -f Deployment.yaml
                     kubectl apply -f service.yaml
                 '''
             }
