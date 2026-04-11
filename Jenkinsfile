@@ -28,7 +28,7 @@ pipeline {
             steps {
                 nodejs('node16') {
                     sh '''
-                        yum install -y libatomic
+                        sudo yum install -y libatomic
                         node -v
                         npm ci
                         npm install --save-dev jsdom
