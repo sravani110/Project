@@ -1,89 +1,126 @@
 pipeline {
     agent any
+
     tools {
         nodejs 'node16'
     }
-    environment {
-        AWS_REGION = "${AWS_REGION}"
-        ACCOUNT_ID = "${AWS_ACCOUNT_ID}"
-        REPO_NAME = "${ECR_REPO_NAME}"
-        IMAGE_TAG = "${env.BUILD_NUMBER}"
 
-        ECR_URL = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        SONARQUBE = "sonarqube"
+    environment {
+        AWS_REGION   = "${AWS_REGION}"
+        ACCOUNT_ID   = "${AWS_ACCOUNT_ID}"
+        REPO_NAME    = "${ECR_REPO_NAME}"
+        IMAGE_TAG    = "${BUILD_NUMBER}"
+
+        ECR_URL      = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        SONARQUBE    = "sonarqube"
+        CLUSTER_NAME = "my-eks-cluster"
     }
+
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-        stage('install dependencies') {
+
+        stage('Install Dependencies') {
             steps {
-                sh '''
-                node -v
-                npm install
-                npm install --save-dev jsdom
-                '''
-            }
-        }
-        stage('run tests with coverage') {
-            steps {
-                sh 'npm run coverage'
-            }
-        } 
-        stage('sonarqube analysis') {
-            steps {
-                withSonarQubeEnv("${SONARQUBE}") {
-                    withCredentials([string(credentialsId:'sonar-cred', variable:'SONAR_TOKEN')]) {
-                          sh '''
-                          node -v
-                npx sonar-scanner \
-                -Dsonar.token=$SONAR_TOKEN
-                '''
-                }
+                nodejs('node16') {
+                    sh '''
+                        node -v
+                        npm ci
+                        npm install --save-dev jsdom
+                    '''
                 }
             }
         }
- 
+
+        stage('Run Tests with Coverage') {
+            steps {
+                nodejs('node16') {
+                    sh 'npm run coverage'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                nodejs('node16') {
+                    withSonarQubeEnv("${SONARQUBE}") {
+                        withCredentials([string(credentialsId: 'sonar-cred', variable: 'SONAR_TOKEN')]) {
+                            sh '''
+                                node -v
+                                npx sonar-scanner \
+                                  -Dsonar.token=$SONAR_TOKEN
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Quality Gate') {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
-        stage('build') {
-            steps {
-                sh 'docker build -t $ECR_URL/$REPO_NAME:$IMAGE_TAG .'
-            }
-        }
-        stage('Login to ECR') {
+
+        stage('Build Docker Image') {
             steps {
                 sh '''
-                aws ecr get-login-password --region $AWS_REGION | \
-                docker login --username AWS --password-stdin $ECR_URL
+                    echo "Building Docker image: $ECR_URL/$REPO_NAME:$IMAGE_TAG"
+                    docker build -t $ECR_URL/$REPO_NAME:$IMAGE_TAG .
                 '''
             }
         }
+
+        stage('Login to ECR') {
+            steps {
+                sh '''
+                    aws ecr get-login-password --region $AWS_REGION | \
+                    docker login --username AWS --password-stdin $ECR_URL
+                '''
+            }
+        }
+
         stage('Push to ECR') {
             steps {
                 sh 'docker push $ECR_URL/$REPO_NAME:$IMAGE_TAG'
             }
         }
+
         stage('Update Manifest') {
             steps {
-                sh 'sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" Deployment.yaml'
-            }
-        }
-        stage('Deploying app') {
-            steps {
                 sh '''
-                aws eks update-kubeconfig --region us-east-1 --name my-eks-cluster
-                kubectl apply -f Deployment.yaml 
-                kubectl apply -f service.yaml 
+                    cp Deployment.yaml Deployment_patched.yaml
+                    sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" Deployment_patched.yaml
                 '''
             }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                sh '''
+                    aws eks update-kubeconfig \
+                        --region $AWS_REGION \
+                        --name $CLUSTER_NAME
+
+                    kubectl apply -f Deployment_patched.yaml
+                    kubectl apply -f service.yaml
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Deployment successful!"
+        }
+        failure {
+            echo "❌ Pipeline failed. Check logs."
         }
     }
 }
