@@ -1,8 +1,10 @@
 pipeline {
     agent any
+
     tools {
-        sonarRunner 'sonarqube'
+        sonarScanner 'sonar'            
     }
+
     environment {
         AWS_REGION   = "${AWS_REGION}"
         ACCOUNT_ID   = "${AWS_ACCOUNT_ID}"
@@ -24,27 +26,27 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                    sh '''
-                        node -v
-                        npm ci
-                        npm install --save-dev jsdom
-                   '''
+                sh '''
+                    node -v
+                    npm ci
+                    npm install --save-dev jsdom
+                '''
             }
         }
 
         stage('Run Tests with Coverage') {
             steps {
-                    sh 'npm run coverage'
-                }
+                sh 'npm run coverage'
             }
+        }
 
         stage('SonarQube Analysis') {
             steps {
-                    withSonarQubeEnv("${SONARQUBE}") {
-                            sh '''
-                                node -v
-                                npx sonar-scanner 
-                            '''
+                withSonarQubeEnv("${SONARQUBE}") {
+                    sh '''
+                        node -v
+                        sonar-scanner  
+                    '''
                 }
             }
         }
