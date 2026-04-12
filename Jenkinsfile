@@ -1,10 +1,5 @@
 pipeline {
     agent any
-
-    tools {
-        sonarRunner 'sonar'            
-    }
-
     environment {
         AWS_REGION   = "${AWS_REGION}"
         ACCOUNT_ID   = "${AWS_ACCOUNT_ID}"
@@ -45,7 +40,7 @@ pipeline {
                 withSonarQubeEnv("${SONARQUBE}") {
                     sh '''
                         node -v
-                        sonar-scanner  
+                       npx sonar-scanner  
                     '''
                 }
             }
