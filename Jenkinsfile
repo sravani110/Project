@@ -1,10 +1,5 @@
 pipeline {
     agent any
-
-    tools {
-        nodejs 'node16'
-    }
-
     environment {
         AWS_REGION   = "${AWS_REGION}"
         ACCOUNT_ID   = "${AWS_ACCOUNT_ID}"
@@ -26,27 +21,22 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                nodejs('node16') {
                     sh '''
                         node -v
                         npm ci
                         npm install --save-dev jsdom
-                    '''
-                }
+                   '''
             }
         }
 
         stage('Run Tests with Coverage') {
             steps {
-                nodejs('node16') {
                     sh 'npm run coverage'
                 }
             }
-        }
 
         stage('SonarQube Analysis') {
             steps {
-                nodejs('node16') {
                     withSonarQubeEnv("${SONARQUBE}") {
                         withCredentials([string(credentialsId: 'sonar-cred', variable: 'SONAR_TOKEN')]) {
                             sh '''
@@ -55,7 +45,6 @@ pipeline {
                                 -Dsonar.token=$SONAR_TOKEN
                             '''
                         }
-                    }
                 }
             }
         }
