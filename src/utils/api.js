@@ -27,9 +27,15 @@ export const filterItems = (items, searchTerm, category, sortBy) => {
     if (searchTerm) {
         const term = searchTerm.toLowerCase();
         filtered = filtered.filter(item =>
-            item.title.toLowerCase().includes(term) ||
-            item.description.toLowerCase().includes(term) ||
-            item.tags?.some(tag => tag.toLowerCase().includes(term))
+            item.title?.toLowerCase().includes(term) ||
+            item.description?.toLowerCase().includes(term) ||
+            item.tags?.some(tag => tag.toLowerCase().includes(term)) ||
+            item.category?.toLowerCase().includes(term) ||
+            item.technologies?.some(tech => tech.toLowerCase().includes(term)) ||
+            item.client?.toLowerCase().includes(term) ||
+            item.completionDate?.toLowerCase().includes(term) ||
+            item.duration?.toLowerCase().includes(term) ||
+            item.price?.toLowerCase().includes(term)
         );
     }
 
