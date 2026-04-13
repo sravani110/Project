@@ -39,6 +39,11 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
+            when {
+                expression {
+                    return params.skip_sonar != false
+                }
+            }
             steps {
                 withSonarQubeEnv("${SONARQUBE}") {
                     
