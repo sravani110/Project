@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: devops-company
-        image: 507297235438.dkr.ecr.us-east-1.amazonaws.com/img-repo:IMAGE_TAG
+        image: 321652031342.dkr.ecr.us-east-1.amazonaws.com/img-repo:IMAGE_TAG
         ports:
         - containerPort: 80
