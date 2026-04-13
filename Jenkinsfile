@@ -41,7 +41,7 @@ pipeline {
         stage('SonarQube Analysis') {
             when {
                 expression {
-                    return params.skip_sonar == true
+                    return params.skip_sonar == false
                 }
             }
             steps {
