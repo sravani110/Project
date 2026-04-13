@@ -44,7 +44,7 @@ pipeline {
                     
                         sh '''
                             node -v
-                            npx sonar-scanner -Dsonar.login=$SONAR_TOKEN
+                            npx sonar-scanner 
                         '''
                     
                 }
