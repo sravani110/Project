@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
         nodejs 'node20'
-        sonar 'sonar-scanner'
+        sonarQube 'sonar-scanner'
     }
     environment {
         AWS_REGION   = "${AWS_REGION}"
