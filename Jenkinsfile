@@ -41,7 +41,6 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE}") {
-                    
                         sh '''
                             node -v
                             npx sonar-scanner 
