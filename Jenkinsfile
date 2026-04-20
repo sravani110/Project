@@ -2,6 +2,7 @@ pipeline {
     agent any
     tools {
         nodejs 'node20'
+        sonar 'sonar-scanner'
     }
     environment {
         AWS_REGION   = "${AWS_REGION}"
@@ -40,7 +41,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonarqube') {
                         sh '''
-                            npx sonar-scanner
+                            sonar-scanner
                         '''
                 }
             }
