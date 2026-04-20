@@ -42,9 +42,8 @@ pipeline {
                 script {
                     def scannerHome = tool 'sonar-scanner'
                 }
-                withSonarQubeEnv("sonarqube") {
+                withSonarQubeEnv('sonarqube') {
                         sh '''
-                            node -v
                             ${scannerHome}/bin/sonar-scanner \
                                 -Dsonar.projectKey=devops-company
                                 -Dsonar.sources=src
