@@ -41,8 +41,6 @@ pipeline {
             steps {
                 withSonarQubeEnv("sonarqube") {
                         sh '''
-                            pwd
-                            ls -l
                             node -v
                             npx sonar-scanner -X
                         '''
