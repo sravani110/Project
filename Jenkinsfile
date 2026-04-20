@@ -8,7 +8,6 @@ pipeline {
         ACCOUNT_ID   = "${AWS_ACCOUNT_ID}"
         REPO_NAME    = "${ECR_REPO_NAME}"
         IMAGE_TAG    = "${BUILD_NUMBER}"
-
         ECR_URL      = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         CLUSTER_NAME = "my-eks-cluster"
     }
@@ -39,23 +38,17 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                script {
-                    def scannerHome = tool 'sonar-scanner'
-                }
                 withSonarQubeEnv('sonarqube') {
                         sh '''
-                            ${scannerHome}/bin/sonar-scanner \
-                                -Dsonar.projectKey=devops-company
-                                -Dsonar.sources=src
+                            npm sonar-scanner
                         '''
-                    
                 }
             }
         }
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 10, unit: 'MINUTES') {
+                timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
