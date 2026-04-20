@@ -10,7 +10,6 @@ pipeline {
         IMAGE_TAG    = "${BUILD_NUMBER}"
 
         ECR_URL      = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        SONARQUBE    = "sonarqube"
         CLUSTER_NAME = "my-eks-cluster"
     }
 
@@ -40,7 +39,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv("${SONARQUBE}") {
+                withSonarQubeEnv("sonarqube") {
                         sh '''
                             node -v
                             npx sonar-scanner 
