@@ -39,11 +39,6 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            when {
-                expression {
-                    return params.skip_sonar == false
-                }
-            }
             steps {
                 withSonarQubeEnv("${SONARQUBE}") {
                     
@@ -57,12 +52,6 @@ pipeline {
         }
 
         stage('Quality Gate') {
-            when {
-                expression {
-                    return params.skip_sonar == false
-                }
-            }
-
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
