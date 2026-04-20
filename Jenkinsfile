@@ -42,7 +42,11 @@ pipeline {
                 withSonarQubeEnv("sonarqube") {
                         sh '''
                             node -v
-                            npx sonar-scanner -X
+                            npx sonar-scanner 
+                            -Dsonar.projectKey=devops-company
+                            -Dsonar.sources=src
+                            -Dsonar.host.url=$SONAR_HOST_URL
+                            -Dsonar.login=$SONAR_AUTH_TOKEN
                         '''
                     
                 }
