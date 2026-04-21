@@ -39,9 +39,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
-                        sh '''
-                          npx sonar-scanner
-                        '''
+                        sh 'npx sonar-scanner'
                 }
             }
         }
@@ -102,10 +100,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Deployment successful!"
+            echo "Deployment successful!"
         }
         failure {
-            echo "❌ Pipeline failed. Check logs."
+            echo "Pipeline failed. Check logs."
         }
     }
 }
