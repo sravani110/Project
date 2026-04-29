@@ -89,7 +89,7 @@ pipeline {
                 sh '''
                     aws eks update-kubeconfig \
                         --region $AWS_REGION \
-                        --name my-eks-cluster
+                        --name $CLUSTER_NAME
 
                     kubectl apply -f Deployment.yaml
                     kubectl apply -f service.yaml
